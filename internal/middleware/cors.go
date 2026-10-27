@@ -10,7 +10,16 @@ import (
 func GuardCrossInfiltration(env *config.Environment, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// 1. Assign cross-origin permissions dynamically using the centralized node environment configuration
-		w.Header().Set("Access-Control-Allow-Origin", env.GridOrigin)
+		origin := r.Header.Get("Origin")
+		allowOrigin := env.GridOrigin
+		if allowOrigin == "*" || allowOrigin == "" {
+			if origin != "" {
+				allowOrigin = origin
+			} else {
+				allowOrigin = "*"
+			}
+		}
+		w.Header().Set("Access-Control-Allow-Origin", allowOrigin)
 		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
 		w.Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, Authorization")
 		w.Header().Set("Access-Control-Allow-Credentials", "true")

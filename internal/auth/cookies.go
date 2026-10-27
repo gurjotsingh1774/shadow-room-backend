@@ -65,5 +65,5 @@ func IsTransportLayerSecure(r *http.Request) bool {
 	if r.TLS != nil {
 		return true
 	}
-	return strings.EqualFold(r.Header.Get("X-Forwarded-Proto"), "https")
+	return strings.EqualFold(r.Header.Get("X-Forwarded-Proto"), "https") || strings.HasPrefix(r.Header.Get("Origin"), "https://")
 }
