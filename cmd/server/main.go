@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 	"time"
@@ -38,6 +39,15 @@ func main() {
 
 	// 7. Structure multiplexer routing grid lanes
 	mux := http.NewServeMux()
+
+	// --- Public Node Health Check ---
+	mux.HandleFunc("/api/health", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_ = json.NewEncoder(w).Encode(map[string]string{
+			"status": "ok",
+		})
+	})
 
 	// --- Public Operative Cryptographic Handshakes (Handled by infiltrationHandler) ---
 	mux.HandleFunc("/api/auth/register", infiltrationHandler.Register)
